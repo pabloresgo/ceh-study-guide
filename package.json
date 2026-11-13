@@ -1,0 +1,17 @@
+{
+  "name": "ceh-study-guide",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A personal, study-oriented reference guide covering the 20 CEH modules — concepts, tools, example commands, and defensive countermeasures.",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "astro": "4.16.18"
+  }
+}

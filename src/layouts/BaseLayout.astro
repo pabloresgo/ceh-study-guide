@@ -1,0 +1,210 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+const { title, description = 'A personal study guide to the 20 CEH modules: concepts, tools, example commands, and defensive countermeasures.' } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const fullTitle = title === 'CEH Study Guide' ? title : `${title} · CEH Study Guide`;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href={`${base}/favicon.svg`} type="image/svg+xml" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- no-flash theme init: run before paint -->
+    <script is:inline>
+      (function () {
+        try {
+          var t = localStorage.getItem('theme');
+          if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="container foot-inner">
+        <div>
+          <strong>CEH Study Guide</strong>
+          <p>A personal, study-oriented reference. For authorized learning, labs, and defensive security only.</p>
+        </div>
+        <div class="foot-links">
+          <a href={base || '/'}>Home</a>
+          <a href={`${base}/#modules`}>All modules</a>
+          <a href={`${base}/#about`}>About</a>
+        </div>
+      </div>
+      <div class="container foot-base">
+        <span>Built for individual study · Ethics &amp; authorization first.</span>
+      </div>
+    </footer>
+
+    <!-- Search modal -->
+    <div id="search-modal" class="search-modal" hidden>
+      <div class="search-backdrop" data-close></div>
+      <div class="search-panel" role="dialog" aria-modal="true" aria-label="Search modules">
+        <div class="search-input-row">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/>
+          </svg>
+          <input id="search-input" type="search" placeholder="Search modules, tools, concepts…" autocomplete="off" aria-label="Search" />
+          <kbd>Esc</kbd>
+        </div>
+        <ul id="search-results" class="search-results"></ul>
+        <p id="search-empty" class="search-empty" hidden>No matches. Try another term.</p>
+      </div>
+    </div>
+
+    <style>
+      .site-footer { margin-top: 4rem; border-top: 1px solid var(--border); background: var(--bg-alt); }
+      .foot-inner { display: flex; flex-wrap: wrap; gap: 2rem; justify-content: space-between; padding-block: 2.2rem 1.4rem; }
+      .foot-inner p { color: var(--text-muted); max-width: 46ch; font-size: 0.9rem; }
+      .foot-links { display: flex; flex-direction: column; gap: 0.5rem; }
+      .foot-links a { color: var(--text-muted); font-weight: 600; font-size: 0.9rem; }
+      .foot-base { padding-bottom: 2rem; color: var(--text-faint); font-size: 0.82rem; }
+
+      .search-modal { position: fixed; inset: 0; z-index: 300; display: grid; place-items: start center; padding-top: 10vh; }
+      .search-modal[hidden] { display: none; }
+      .search-backdrop { position: absolute; inset: 0; background: rgba(8, 15, 26, 0.55); backdrop-filter: blur(3px); }
+      .search-panel {
+        position: relative; width: min(640px, 92vw); background: var(--surface);
+        border: 1px solid var(--border-strong); border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-lg); overflow: hidden;
+      }
+      .search-input-row { display: flex; align-items: center; gap: 0.7rem; padding: 1rem 1.2rem; border-bottom: 1px solid var(--border); color: var(--text-muted); }
+      #search-input { flex: 1; border: 0; background: transparent; font-size: 1.05rem; color: var(--text); font-family: inherit; }
+      #search-input:focus { outline: none; }
+      .search-input-row kbd {
+        font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-faint);
+        border: 1px solid var(--border); border-radius: 6px; padding: 2px 6px; background: var(--surface-2);
+      }
+      .search-results { list-style: none; margin: 0; padding: 0.5rem; max-height: 56vh; overflow-y: auto; }
+      .search-results li a {
+        display: flex; align-items: baseline; gap: 0.7rem; padding: 0.7rem 0.85rem; border-radius: 10px; color: var(--text);
+      }
+      .search-results li a:hover, .search-results li a.active { background: var(--surface-2); text-decoration: none; }
+      .search-results .sr-num { font-family: var(--font-mono); font-size: 0.8rem; color: var(--accent); min-width: 2.4rem; }
+      .search-results .sr-title { font-weight: 600; }
+      .search-results .sr-sum { display: block; color: var(--text-muted); font-size: 0.85rem; }
+      .search-empty { padding: 1.4rem; text-align: center; color: var(--text-muted); }
+    </style>
+
+    <!-- global client behaviour: theme toggle, copy buttons, search -->
+    <script>
+      // ---- theme toggle ----
+      const root = document.documentElement;
+      const toggle = document.getElementById('theme-toggle');
+      function currentTheme() {
+        const set = root.getAttribute('data-theme');
+        if (set) return set;
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+      toggle?.addEventListener('click', () => {
+        const next = currentTheme() === 'dark' ? 'light' : 'dark';
+        root.setAttribute('data-theme', next);
+        try { localStorage.setItem('theme', next); } catch (e) {}
+      });
+
+      // ---- copy buttons on code blocks ----
+      document.querySelectorAll('pre').forEach((pre) => {
+        const btn = document.createElement('button');
+        btn.className = 'copy-btn';
+        btn.type = 'button';
+        btn.setAttribute('aria-label', 'Copy code');
+        btn.textContent = 'Copy';
+        pre.appendChild(btn);
+        btn.addEventListener('click', async () => {
+          const code = pre.querySelector('code')?.innerText ?? pre.innerText;
+          try {
+            await navigator.clipboard.writeText(code.replace(/\nCopy$/, ''));
+            btn.textContent = 'Copied!';
+            btn.classList.add('ok');
+            setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('ok'); }, 1600);
+          } catch (e) { btn.textContent = 'Error'; }
+        });
+      });
+
+      // ---- search ----
+      const modal = document.getElementById('search-modal');
+      const openBtn = document.getElementById('search-open');
+      const input = document.getElementById('search-input');
+      const results = document.getElementById('search-results');
+      const empty = document.getElementById('search-empty');
+      let idx = [];
+      let loaded = false;
+      const BASE = document.documentElement.dataset.base || '';
+
+      async function loadIndex() {
+        if (loaded) return;
+        try {
+          const res = await fetch((window.__BASE__ || '') + '/search-index.json');
+          idx = await res.json();
+          loaded = true;
+        } catch (e) { idx = []; }
+      }
+      function openSearch() {
+        modal.hidden = false;
+        loadIndex();
+        setTimeout(() => input.focus(), 30);
+      }
+      function closeSearch() { modal.hidden = true; input.value = ''; render(''); }
+      function render(q) {
+        q = q.trim().toLowerCase();
+        results.innerHTML = '';
+        if (!q) { empty.hidden = true; return; }
+        const terms = q.split(/\s+/);
+        const matches = idx.filter((m) => {
+          const hay = m.haystack;
+          return terms.every((t) => hay.includes(t));
+        }).slice(0, 12);
+        matches.forEach((m, i) => {
+          const li = document.createElement('li');
+          li.innerHTML = `<a href="${m.url}" class="${i === 0 ? 'active' : ''}">
+            <span class="sr-num">${String(m.number).padStart(2, '0')}</span>
+            <span><span class="sr-title">${m.title}</span><span class="sr-sum">${m.summary}</span></span></a>`;
+          results.appendChild(li);
+        });
+        empty.hidden = matches.length > 0;
+      }
+      openBtn?.addEventListener('click', openSearch);
+      input?.addEventListener('input', (e) => render(e.target.value));
+      modal?.querySelector('[data-close]')?.addEventListener('click', closeSearch);
+      document.addEventListener('keydown', (e) => {
+        if (e.key === '/' && modal.hidden && !/input|textarea/i.test(document.activeElement.tagName)) {
+          e.preventDefault(); openSearch();
+        } else if (e.key === 'Escape' && !modal.hidden) {
+          closeSearch();
+        } else if (e.key === 'Enter' && !modal.hidden) {
+          const first = results.querySelector('a');
+          if (first) window.location.href = first.getAttribute('href');
+        }
+      });
+    </script>
+    <script is:inline define:vars={{ base }}>
+      window.__BASE__ = base;
+    </script>
+  </body>
+</html>

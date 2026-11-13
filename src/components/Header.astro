@@ -1,0 +1,82 @@
+---
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const home = base || '/';
+---
+<header class="site-header">
+  <div class="container hdr-inner">
+    <a class="brand" href={home} aria-label="CEH Study Guide — home">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3z"/>
+        <path d="M9.5 12l1.8 1.8L15 10"/>
+      </svg>
+      <span class="brand-text"><strong>CEH</strong> Study Guide</span>
+    </a>
+
+    <nav class="hdr-nav" aria-label="Primary">
+      <a href={home}>Home</a>
+      <a href={`${base}/#modules`}>Modules</a>
+      <a href={`${base}/#about`}>About</a>
+    </nav>
+
+    <div class="hdr-actions">
+      <button id="search-open" class="icon-btn" aria-label="Search modules" title="Search (press /)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/>
+        </svg>
+      </button>
+      <button id="theme-toggle" class="icon-btn" aria-label="Toggle dark mode" title="Toggle theme">
+        <svg class="icon-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M19 5l-1.5 1.5M6.5 17.5L5 19"/>
+        </svg>
+        <svg class="icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 12.8A8 8 0 1 1 11.2 3a6 6 0 0 0 9.8 9.8z"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky; top: 0; z-index: 100;
+    height: var(--header-h);
+    background: color-mix(in srgb, var(--surface) 88%, transparent);
+    backdrop-filter: saturate(180%) blur(10px);
+    border-bottom: 1px solid var(--border);
+  }
+  .hdr-inner { height: var(--header-h); display: flex; align-items: center; gap: 1rem; }
+  .brand { display: flex; align-items: center; gap: 0.55rem; color: var(--text); font-size: 1.05rem; }
+  .brand:hover { text-decoration: none; }
+  .brand svg { color: var(--accent); }
+  .brand-text strong { color: var(--primary); }
+  :root[data-theme='dark'] .brand-text strong { color: var(--primary-hover); }
+
+  .hdr-nav { display: flex; gap: 1.3rem; margin-left: 1.5rem; }
+  .hdr-nav a { color: var(--text-muted); font-weight: 600; font-size: 0.93rem; }
+  .hdr-nav a:hover { color: var(--accent); text-decoration: none; }
+
+  .hdr-actions { margin-left: auto; display: flex; gap: 0.4rem; }
+  .icon-btn {
+    display: grid; place-items: center; width: 40px; height: 40px;
+    border-radius: 10px; border: 1px solid var(--border); background: var(--surface);
+    color: var(--text-muted); cursor: pointer; transition: all 0.15s ease;
+  }
+  .icon-btn:hover { color: var(--accent); border-color: var(--border-strong); background: var(--surface-2); }
+
+  .icon-moon { display: none; }
+  :root[data-theme='dark'] .icon-sun { display: none; }
+  :root[data-theme='dark'] .icon-moon { display: block; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme='light']) .icon-sun { display: none; }
+    :root:not([data-theme='light']) .icon-moon { display: block; }
+  }
+
+  @media (max-width: 640px) {
+    .hdr-nav { display: none; }
+    .brand-text { font-size: 1rem; }
+  }
+</style>

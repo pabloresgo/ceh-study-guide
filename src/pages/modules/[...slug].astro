@@ -1,0 +1,49 @@
+---
+import { getCollection } from 'astro:content';
+import ModuleLayout from '../../layouts/ModuleLayout.astro';
+import ToolTable from '../../components/ToolTable.astro';
+import Callout from '../../components/Callout.astro';
+
+export async function getStaticPaths() {
+  const navLink = (m: any) => ({ number: m.data.number, title: m.data.title, slug: m.slug });
+  const modules = (await getCollection('modules')).sort((a, b) => a.data.number - b.data.number);
+  return modules.map((entry, i) => ({
+    params: { slug: entry.slug },
+    props: {
+      entry,
+      prev: i > 0 ? navLink(modules[i - 1]) : null,
+      next: i < modules.length - 1 ? navLink(modules[i + 1]) : null,
+    },
+  }));
+}
+
+const { entry, prev, next } = Astro.props;
+const { Content, headings } = await entry.render();
+const { objectives, tools, takeaways } = entry.data;
+---
+<ModuleLayout data={entry.data} headings={headings} prev={prev} next={next}>
+  {objectives.length > 0 && (
+    <Callout type="objectives">
+      <ul>{objectives.map((o: string) => <li>{o}</li>)}</ul>
+    </Callout>
+  )}
+
+  <Content />
+
+  {tools.length > 0 && (
+    <section>
+      <h2 id="tools">Tools &amp; references</h2>
+      <p>Representative tooling for this module. Use the filter to narrow the list; links point to each project's official source.</p>
+      <ToolTable tools={tools} />
+    </section>
+  )}
+
+  {takeaways.length > 0 && (
+    <section>
+      <h2 id="key-takeaways">Key takeaways</h2>
+      <Callout type="note" title="Remember">
+        <ul>{takeaways.map((t: string) => <li>{t}</li>)}</ul>
+      </Callout>
+    </section>
+  )}
+</ModuleLayout>

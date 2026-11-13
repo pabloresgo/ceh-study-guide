@@ -1,0 +1,36 @@
+---
+interface Props { type?: 'note' | 'defense' | 'warning' | 'objectives'; title?: string }
+const { type = 'note', title } = Astro.props;
+const meta = {
+  note: { label: 'Note', cls: 'co-note' },
+  defense: { label: 'Countermeasures', cls: 'co-defense' },
+  warning: { label: 'Caution', cls: 'co-warning' },
+  objectives: { label: "What you'll learn", cls: 'co-obj' },
+}[type];
+---
+<aside class={`callout ${meta.cls}`}>
+  <div class="co-head">
+    <span class="co-dot" aria-hidden="true"></span>
+    <strong>{title ?? meta.label}</strong>
+  </div>
+  <div class="co-body"><slot /></div>
+</aside>
+
+<style>
+  .callout { border: 1px solid var(--border); border-left-width: 4px; border-radius: var(--radius-sm); padding: 1rem 1.15rem; margin: 1.3rem 0; background: var(--surface); }
+  .co-head { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.4rem; font-size: 0.82rem; letter-spacing: 0.03em; text-transform: uppercase; }
+  .co-dot { width: 9px; height: 9px; border-radius: 50%; }
+  .co-body :global(p:first-child) { margin-top: 0; }
+  .co-body :global(p:last-child) { margin-bottom: 0; }
+  .co-body :global(ul) { margin: 0.2rem 0; padding-left: 1.2rem; }
+  .co-body :global(li) { margin: 0.3rem 0; }
+
+  .co-note { border-left-color: var(--accent); }
+  .co-note .co-head { color: var(--accent); } .co-note .co-dot { background: var(--accent); }
+  .co-defense { border-left-color: var(--teal-600); background: color-mix(in srgb, var(--accent-soft) 55%, var(--surface)); }
+  .co-defense .co-head { color: var(--accent); } .co-defense .co-dot { background: var(--accent); }
+  .co-warning { border-left-color: var(--danger); background: color-mix(in srgb, var(--danger-soft) 45%, var(--surface)); }
+  .co-warning .co-head { color: var(--danger); } .co-warning .co-dot { background: var(--danger); }
+  .co-obj { border-left-color: var(--highlight); background: color-mix(in srgb, var(--highlight-soft) 55%, var(--surface)); }
+  .co-obj .co-head { color: var(--highlight); } .co-obj .co-dot { background: var(--highlight); }
+</style>

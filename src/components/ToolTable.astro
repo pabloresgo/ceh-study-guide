@@ -1,0 +1,94 @@
+---
+interface Tool { name: string; purpose: string; type: string; source?: string }
+interface Props { tools: Tool[] }
+const { tools } = Astro.props;
+const typeClass: Record<string, string> = {
+  'Open Source': 'tt-os',
+  'Commercial': 'tt-com',
+  'Built-in': 'tt-bi',
+  'Framework': 'tt-fw',
+  'Online': 'tt-on',
+};
+---
+{tools.length > 0 && (
+  <div class="tooltable" data-tooltable>
+    <div class="tt-filter">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/>
+      </svg>
+      <input type="search" placeholder={`Filter ${tools.length} tools…`} aria-label="Filter tools" data-tt-input />
+      <span class="tt-count" data-tt-count>{tools.length}</span>
+    </div>
+    <div class="tt-scroll">
+      <table>
+        <thead>
+          <tr><th>Tool</th><th>Purpose</th><th>Type</th><th>Source</th></tr>
+        </thead>
+        <tbody>
+          {tools.map((t) => (
+            <tr data-tt-row data-text={`${t.name} ${t.purpose} ${t.type}`.toLowerCase()}>
+              <td class="tt-name">{t.name}</td>
+              <td class="tt-purpose">{t.purpose}</td>
+              <td><span class={`tt-type ${typeClass[t.type] ?? ''}`}>{t.type}</span></td>
+              <td>
+                {t.source ? (
+                  <a href={t.source} target="_blank" rel="noopener noreferrer">Link ↗</a>
+                ) : (
+                  <span class="tt-dash">—</span>
+                )}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <p class="tt-empty" data-tt-empty hidden>No tools match that filter.</p>
+  </div>
+)}
+
+<style>
+  .tooltable { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; background: var(--surface); box-shadow: var(--shadow-sm); margin: 1.2rem 0; }
+  .tt-filter { display: flex; align-items: center; gap: 0.6rem; padding: 0.7rem 1rem; border-bottom: 1px solid var(--border); color: var(--text-muted); background: var(--surface-2); }
+  .tt-filter input { flex: 1; border: 0; background: transparent; color: var(--text); font-family: inherit; font-size: 0.92rem; }
+  .tt-filter input:focus { outline: none; }
+  .tt-count { font-family: var(--font-mono); font-size: 0.78rem; color: var(--accent); background: var(--accent-soft); padding: 2px 8px; border-radius: 999px; }
+  .tt-scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.9rem; min-width: 540px; }
+  thead th { text-align: left; font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-faint); padding: 0.7rem 1rem; border-bottom: 1px solid var(--border); }
+  tbody td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tbody tr:last-child td { border-bottom: 0; }
+  tbody tr:hover { background: var(--surface-2); }
+  .tt-name { font-weight: 700; color: var(--text); white-space: nowrap; }
+  .tt-purpose { color: var(--text-muted); }
+  .tt-dash { color: var(--text-faint); }
+  .tt-type { font-size: 0.72rem; font-weight: 600; padding: 0.15rem 0.55rem; border-radius: 999px; white-space: nowrap; }
+  .tt-os { background: var(--accent-soft); color: var(--accent); }
+  .tt-com { background: var(--highlight-soft); color: var(--highlight); }
+  .tt-bi { background: var(--surface-2); color: var(--text-muted); border: 1px solid var(--border); }
+  .tt-fw { background: #ede9fe; color: #7c3aed; }
+  .tt-on { background: #e0f2fe; color: #0369a1; }
+  :root[data-theme='dark'] .tt-fw { background: #2e1065; color: #c4b5fd; }
+  :root[data-theme='dark'] .tt-on { background: #0c2a3f; color: #7dd3fc; }
+  .tt-empty { padding: 1.2rem; text-align: center; color: var(--text-muted); }
+</style>
+
+<script>
+  document.querySelectorAll('[data-tooltable]').forEach((tbl) => {
+    const input = tbl.querySelector('[data-tt-input]');
+    const rows = Array.from(tbl.querySelectorAll('[data-tt-row]'));
+    const count = tbl.querySelector('[data-tt-count]');
+    const emptyEl = tbl.querySelector('[data-tt-empty]');
+    input?.addEventListener('input', (e) => {
+      const q = e.target.value.trim().toLowerCase();
+      let visible = 0;
+      rows.forEach((r) => {
+        const show = !q || r.dataset.text.includes(q);
+        r.hidden = !show;
+        if (show) visible++;
+      });
+      if (count) count.textContent = String(visible);
+      if (emptyEl) emptyEl.hidden = visible > 0;
+    });
+  });
+</script>

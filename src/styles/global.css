@@ -1,0 +1,240 @@
+/* ============================================================
+   CEH Study Guide — design tokens & base styles
+   Education-template inspired: navy primary, teal accent,
+   amber highlight. Light + dark, WCAG-AA contrast.
+   ============================================================ */
+
+:root {
+  /* brand */
+  --navy-900: #0f1f33;
+  --navy-800: #16293f;
+  --navy-700: #1e3a5f;
+  --navy-600: #2b4d77;
+  --teal-600: #0d9488;
+  --teal-500: #14b8a6;
+  --teal-400: #2dd4bf;
+  --amber-500: #f59e0b;
+  --amber-400: #fbbf24;
+  --rose-500: #e11d48;
+
+  /* semantic (light) */
+  --bg: #f7f9fc;
+  --bg-alt: #eef2f8;
+  --surface: #ffffff;
+  --surface-2: #f3f6fb;
+  --border: #dde4ee;
+  --border-strong: #c6d1e0;
+  --text: #16222f;
+  --text-muted: #566274;
+  --text-faint: #8a94a3;
+  --primary: var(--navy-700);
+  --primary-hover: var(--navy-600);
+  --accent: var(--teal-600);
+  --accent-soft: #d8f3ef;
+  --highlight: var(--amber-500);
+  --highlight-soft: #fef3d7;
+  --danger: var(--rose-500);
+  --danger-soft: #fde3e8;
+  --code-bg: #0f1f33;
+  --shadow-sm: 0 1px 2px rgba(15, 31, 51, 0.06), 0 1px 3px rgba(15, 31, 51, 0.08);
+  --shadow-md: 0 4px 12px rgba(15, 31, 51, 0.08), 0 2px 4px rgba(15, 31, 51, 0.06);
+  --shadow-lg: 0 12px 32px rgba(15, 31, 51, 0.12);
+
+  /* type & shape */
+  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', 'Cascadia Code', Menlo, Consolas, monospace;
+  --radius-sm: 8px;
+  --radius: 14px;
+  --radius-lg: 20px;
+  --maxw: 1180px;
+  --maxw-prose: 760px;
+  --header-h: 64px;
+}
+
+:root[data-theme='dark'] {
+  --bg: #0b1522;
+  --bg-alt: #0f1f33;
+  --surface: #13233a;
+  --surface-2: #192e49;
+  --border: #243a57;
+  --border-strong: #31507a;
+  --text: #e6edf6;
+  --text-muted: #a3b2c7;
+  --text-faint: #6e7f97;
+  --primary: #5b8bc4;
+  --primary-hover: #7aa6d8;
+  --accent: var(--teal-400);
+  --accent-soft: #0c3b38;
+  --highlight: var(--amber-400);
+  --highlight-soft: #3a2d10;
+  --danger: #fb7185;
+  --danger-soft: #3b1420;
+  --code-bg: #0a1626;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 14px 36px rgba(0, 0, 0, 0.5);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --bg: #0b1522;
+    --bg-alt: #0f1f33;
+    --surface: #13233a;
+    --surface-2: #192e49;
+    --border: #243a57;
+    --border-strong: #31507a;
+    --text: #e6edf6;
+    --text-muted: #a3b2c7;
+    --text-faint: #6e7f97;
+    --primary: #5b8bc4;
+    --primary-hover: #7aa6d8;
+    --accent: #2dd4bf;
+    --accent-soft: #0c3b38;
+    --highlight: #fbbf24;
+    --highlight-soft: #3a2d10;
+    --danger: #fb7185;
+    --danger-soft: #3b1420;
+    --code-bg: #0a1626;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 14px 36px rgba(0, 0, 0, 0.5);
+  }
+}
+
+* { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--header-h) + 16px);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.65;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+h1, h2, h3, h4 { line-height: 1.25; font-weight: 700; color: var(--text); }
+h1 { font-size: clamp(1.9rem, 4vw, 2.6rem); letter-spacing: -0.02em; }
+h2 { font-size: clamp(1.4rem, 2.6vw, 1.8rem); letter-spacing: -0.01em; margin-top: 2.4rem; }
+h3 { font-size: 1.2rem; margin-top: 1.8rem; }
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+p { margin: 0.8rem 0; }
+
+img { max-width: 100%; height: auto; }
+
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ---------- layout helpers ---------- */
+.container { width: 100%; max-width: var(--maxw); margin-inline: auto; padding-inline: 20px; }
+
+.skip-link {
+  position: absolute; left: -999px; top: 8px; z-index: 200;
+  background: var(--primary); color: #fff; padding: 10px 16px; border-radius: 8px;
+}
+.skip-link:focus { left: 16px; }
+
+/* ---------- buttons / chips ---------- */
+.btn {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  font-weight: 600; font-size: 0.95rem;
+  padding: 0.7rem 1.2rem; border-radius: 999px;
+  border: 1px solid transparent; cursor: pointer;
+  transition: transform 0.12s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+}
+.btn:hover { text-decoration: none; transform: translateY(-1px); }
+.btn-primary { background: var(--primary); color: #fff; box-shadow: var(--shadow-sm); }
+.btn-primary:hover { background: var(--primary-hover); }
+.btn-ghost { background: var(--surface); color: var(--text); border-color: var(--border-strong); }
+.btn-ghost:hover { background: var(--surface-2); }
+
+.chip {
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  font-size: 0.72rem; font-weight: 600; letter-spacing: 0.02em;
+  padding: 0.25rem 0.65rem; border-radius: 999px;
+  background: var(--accent-soft); color: var(--accent);
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+}
+.chip-amber { background: var(--highlight-soft); color: var(--highlight); border-color: color-mix(in srgb, var(--highlight) 35%, transparent); }
+.chip-muted { background: var(--surface-2); color: var(--text-muted); border-color: var(--border); }
+
+/* ---------- utility ---------- */
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* ---------- reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+}
+
+/* ---------- code blocks + copy button ---------- */
+pre {
+  position: relative;
+  background: var(--code-bg) !important;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  padding: 1.1rem 1.1rem;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 0.86rem;
+  line-height: 1.6;
+  margin: 1rem 0;
+  box-shadow: var(--shadow-sm);
+}
+pre code { font-family: var(--font-mono); background: none; padding: 0; }
+:not(pre) > code {
+  font-family: var(--font-mono);
+  font-size: 0.86em;
+  background: var(--surface-2);
+  color: var(--accent);
+  padding: 0.12em 0.45em;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+}
+.copy-btn {
+  position: absolute; top: 8px; right: 8px;
+  font-family: var(--font-sans); font-size: 0.72rem; font-weight: 600;
+  color: #cbd5e1; background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.18); border-radius: 7px;
+  padding: 4px 9px; cursor: pointer; opacity: 0; transition: opacity 0.15s ease, background 0.15s ease;
+}
+pre:hover .copy-btn, .copy-btn:focus-visible { opacity: 1; }
+.copy-btn:hover { background: rgba(255,255,255,0.16); }
+.copy-btn.ok { color: var(--teal-400); border-color: var(--teal-400); }
+@media (max-width: 640px) { .copy-btn { opacity: 1; } }
+
+/* ---------- prose (rendered module markdown) ---------- */
+.prose { max-width: var(--maxw-prose); font-size: 1.02rem; }
+.prose > :first-child { margin-top: 0; }
+.prose h2 { padding-top: 0.4rem; scroll-margin-top: calc(var(--header-h) + 20px); }
+.prose h3 { scroll-margin-top: calc(var(--header-h) + 20px); }
+.prose ul, .prose ol { padding-left: 1.3rem; margin: 0.8rem 0; }
+.prose li { margin: 0.4rem 0; }
+.prose li::marker { color: var(--accent); }
+.prose strong { color: var(--text); }
+.prose blockquote {
+  margin: 1.2rem 0; padding: 0.6rem 1.1rem; border-left: 4px solid var(--border-strong);
+  background: var(--surface-2); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; color: var(--text-muted);
+}
+.prose table { width: 100%; border-collapse: collapse; margin: 1.1rem 0; font-size: 0.92rem; }
+.prose table th, .prose table td { border: 1px solid var(--border); padding: 0.55rem 0.8rem; text-align: left; }
+.prose table th { background: var(--surface-2); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); }
+.prose hr { border: 0; border-top: 1px solid var(--border); margin: 2rem 0; }
+.prose .anchor-h { color: inherit; }
